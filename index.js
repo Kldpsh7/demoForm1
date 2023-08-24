@@ -19,18 +19,16 @@ const myForm = document.querySelector('[name=form1]');
                 setTimeout(()=>document.querySelector('#msg').innerHTML='',3000)
             }
             else{
-                //logging input values in console
-                console.log(event.target.Name.value);
-                console.log(event.target.mail.value);
-                console.log(event.target.phone.value);
 
                 //Saving input data in localstorage
-                localStorage.setItem('Name: '+event.target.Name.value,'Email: '+event.target.mail.value+', Phone No.: '+event.target.phone.value);
+                localStorage.setItem(event.target.mail.value,'Name: '+event.target.Name.value+', Email: '+event.target.mail.value+', Phone No.: '+event.target.phone.value);
 
                 //Inserting input values into ol element and displayign them on screen
                 const li=document.createElement('li');
-                li.style='color:green;font-size:20px;'
-                li.appendChild(document.createTextNode(`${event.target.Name.value} : ${event.target.mail.value} : ${event.target.phone.value}`));
+                li.style='color:green;font-size:15px;';
+                li.appendChild(document.createTextNode(localStorage.getItem(event.target.mail.value)));
+                //adding delete button to list
+                li.appendChild(delBtn.cloneNode(true));
                 document.querySelector('#users').appendChild(li);
 
                 //Displaying a message when form is succesfully submitted with timeout
@@ -46,6 +44,23 @@ const myForm = document.querySelector('[name=form1]');
                 event.target.mail.value=event.target.Name.value=event.target.phone.value='';
             }
         }
+
+        //Creating a delete button to add with list element
+        let delBtn=document.createElement('button');
+        delBtn.innerText='X';
+        delBtn.className='delete'
+        delBtn.style='background-Color:red; color:yellow; float:right; font-Size:10px;';
+
+
+        //Adding eventlistner for delete button
+        let userList=document.getElementById('users');
+        userList.addEventListener('click',Delete);
+        function Delete(e){
+            if(e.target.className=='delete'){
+                e.target.parentElement.parentElement.removeChild(e.target.parentElement);
+            }
+        }
+
 
         //MouseOver Function
         function MO(){
