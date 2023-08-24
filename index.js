@@ -24,7 +24,10 @@ const myForm = document.querySelector('[name=form1]');
                 console.log(event.target.mail.value);
                 console.log(event.target.phone.value);
 
-                //Inserting input values into ul element and displayign them on screen
+                //Saving input data in localstorage
+                localStorage.setItem('Name: '+event.target.Name.value,'Email: '+event.target.mail.value+', Phone No.: '+event.target.phone.value);
+
+                //Inserting input values into ol element and displayign them on screen
                 const li=document.createElement('li');
                 li.style='color:green;font-size:20px;'
                 li.appendChild(document.createTextNode(`${event.target.Name.value} : ${event.target.mail.value} : ${event.target.phone.value}`));
