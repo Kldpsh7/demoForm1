@@ -20,15 +20,29 @@ const myForm = document.querySelector('[name=form1]');
             }
             else{
 
+                //Getting data from form
+                let name=event.target.Name.value;
+                let email=event.target.mail.value;
+                let phone=event.target.phone.value;
+
+                //creating object
+                let obj={
+                    name,
+                    email,
+                    phone
+                }
                 //Saving input data in localstorage
-                localStorage.setItem(event.target.mail.value,'Name: '+event.target.Name.value+', Email: '+event.target.mail.value+', Phone No.: '+event.target.phone.value);
+                localStorage.setItem(obj.email,JSON.stringify(obj));
 
                 //Inserting input values into ol element and displayign them on screen
                 const li=document.createElement('li');
                 li.style='color:green;font-size:15px;';
-                li.appendChild(document.createTextNode(localStorage.getItem(event.target.mail.value)));
+                li.appendChild(document.createTextNode(obj.name+' - '+obj.email+' - '+obj.phone));
                 //adding delete button to list
                 li.appendChild(delBtn.cloneNode(true));
+                //adding edit button to list
+                li.appendChild(edit.cloneNode(true));
+                //adding list item to orderd list
                 document.querySelector('#users').appendChild(li);
 
                 //Displaying a message when form is succesfully submitted with timeout
@@ -41,7 +55,7 @@ const myForm = document.querySelector('[name=form1]');
                 }
 
                 //Clearing input fields
-                event.target.mail.value=event.target.Name.value=event.target.phone.value='';
+                event.target.mail.value=event.target.Name.value=event.target.phone.value='';               
             }
         }
 
@@ -52,15 +66,30 @@ const myForm = document.querySelector('[name=form1]');
         delBtn.style='background-Color:red; color:yellow; float:right; font-Size:10px;';
 
 
-        //Adding eventlistner for delete button
-        let userList=document.getElementById('users');
-        userList.addEventListener('click',Delete);
+        //Adding eventlistner for delete button and edit button
+        document.getElementById('users').addEventListener('click',Delete);
         function Delete(e){
-            if(e.target.className=='delete'){
-                e.target.parentElement.parentElement.removeChild(e.target.parentElement);
+            if (e.target.className=='delete'){
+                e.target.parentElement.remove();
+                localStorage.removeItem(e.target.parentElement.innerText.split(' - ')[1]);
+            }
+        
+            if (e.target.className=='edit'){
+                //removing item from localstorage
+                localStorage.removeItem(e.target.parentElement.innerText.split(' - ')[1]);
+                //populating input fields to edit them
+                document.getElementById('Name').value=e.target.parentElement.innerText.split(' - ')[0];
+                document.getElementById('mail').value=e.target.parentElement.innerText.split(' - ')[1];
+                document.getElementById('phone').value=e.target.parentElement.innerText.split(' - ')[2].slice(0,-6);
+                e.target.parentElement.remove();
             }
         }
 
+        //creating an edit button
+        let edit=document.createElement('button');
+        edit.innerText='Edit'
+        edit.className='edit'
+        edit.style='background-Color:green; color:yellow; float:right; font-Size:10px;';
 
         //MouseOver Function
         function MO(){
