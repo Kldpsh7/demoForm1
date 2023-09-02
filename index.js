@@ -59,13 +59,15 @@ function buttonPress(event){
 }
 
 //SHOWING ALL THE PREVIOUSLY BOOKED APPOINTMENTS ON SCREEN WHEN PAGE LOADS
-axios.get(baseUrl)
-.then((res)=>{
-    for (let index = 0; index < res.data.length; index++) {
-        showOnScreen(res.data[index])
-    }
+window.addEventListener('DOMContentLoaded',()=>{
+    axios.get(baseUrl)
+    .then((res)=>{
+        for (let index = 0; index < res.data.length; index++) {
+            showOnScreen(res.data[index])
+        }
+    })
+    .catch((err)=>console.log(err))
 })
-.catch((err)=>console.log(err))
 
 //Inserting input values into ol element and displayign them on screen
 function showOnScreen(obj){
