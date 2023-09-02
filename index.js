@@ -73,6 +73,8 @@ window.addEventListener('DOMContentLoaded',()=>{
 function showOnScreen(obj){
     const li=document.createElement('li');
     li.style='color:green;font-size:15px;';
+    //GIVING ID OF OBJECT TO LI SO WE CAN GRAB ON TO IT WHEN NEEDED
+    li.id=obj._id;
     li.appendChild(document.createTextNode(obj.name+' - '+obj.email+' - '+obj.phone));
     //adding delete button to list
     li.appendChild(delBtn.cloneNode(true));
@@ -93,8 +95,10 @@ delBtn.style='background-Color:red; color:yellow; float:right; font-Size:10px;';
 document.getElementById('users').addEventListener('click',Delete);
 function Delete(e){
     if (e.target.className=='delete'){
-        e.target.parentElement.remove();
-        localStorage.removeItem(e.target.parentElement.innerText.split(' - ')[1]);
+        
+        axios.delete(`${baseUrl}/${e.target.parentElement.id}`)
+        .then(()=>e.target.parentElement.remove())
+        .catch((err)=>console.log(err))
     }
         
     if (e.target.className=='edit'){
