@@ -1,5 +1,7 @@
+var isEdit=0;
+var eid;
 //initializing a baseURL for crud base URL and use it anywhere on the page
-var baseUrl='https://crudcrud.com/api/baaca5b051f448b4a175df2305a3b9de/aptdata'
+var baseUrl='https://crudcrud.com/api/89c17bcb17eb4a3bb8f9fc7af454f77a/aptdata'
 // Getting form element and setting event listners
 const myForm = document.querySelector('[name=form1]');
 myForm.addEventListener('submit', buttonPress);
@@ -33,16 +35,26 @@ function buttonPress(event){
             email,
             phone
         }
-        //Saving input data on crudcrud
-        axios.post(baseUrl,obj)
-        .then((res)=>{
-            console.log(res);
-            showOnScreen(res.data)
-        })
-        .catch((err)=>{
-            console.log(err);
-        })
-
+        //Saving input data on crudcrud if post
+        if (isEdit==1){
+            console.log('Put Request')
+            axios.put(`${baseUrl}/${eid}`,obj)
+                .then(()=>{
+                    document.getElementById(eid).firstElementChild.textContent=obj.name+' - '+obj.email+' - '+obj.phone;
+                })
+                .catch(err=>console.log(err))
+            isEdit=0
+        }
+        else{
+            axios.post(baseUrl,obj)
+            .then((res)=>{
+                console.log(res);
+                showOnScreen(res.data)
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
+        }
 
         //Displaying a message when form is succesfully submitted with timeout
         document.querySelector('#msg').style.background='green';
@@ -72,10 +84,12 @@ window.addEventListener('DOMContentLoaded',()=>{
 //Inserting input values into ol element and displayign them on screen
 function showOnScreen(obj){
     const li=document.createElement('li');
+    const span=document.createElement('span');
     li.style='color:green;font-size:15px;';
     //GIVING ID OF OBJECT TO LI SO WE CAN GRAB ON TO IT WHEN NEEDED
     li.id=obj._id;
-    li.appendChild(document.createTextNode(obj.name+' - '+obj.email+' - '+obj.phone));
+    span.innerText=obj.name+' - '+obj.email+' - '+obj.phone;
+    li.appendChild(span);
     //adding delete button to list
     li.appendChild(delBtn.cloneNode(true));
     //adding edit button to list
@@ -92,8 +106,8 @@ delBtn.style='background-Color:red; color:yellow; float:right; font-Size:10px;';
 
 
 //Adding eventlistner for delete button and edit button
-document.getElementById('users').addEventListener('click',Delete);
-function Delete(e){
+document.getElementById('users').addEventListener('click',action);
+function action(e){
     if (e.target.className=='delete'){
         
         axios.delete(`${baseUrl}/${e.target.parentElement.id}`)
@@ -102,13 +116,15 @@ function Delete(e){
     }
         
     if (e.target.className=='edit'){
-        //removing item from localstorage
-        localStorage.removeItem(e.target.parentElement.innerText.split(' - ')[1]);
-        //populating input fields to edit them
-        document.getElementById('Name').value=e.target.parentElement.innerText.split(' - ')[0];
-        document.getElementById('mail').value=e.target.parentElement.innerText.split(' - ')[1];
-        document.getElementById('phone').value=e.target.parentElement.innerText.split(' - ')[2].slice(0,-6);
-        e.target.parentElement.remove();
+            //populating input fields to edit them
+            document.getElementById('Name').value=e.target.parentElement.firstElementChild.textContent.split(' - ')[0];
+            document.getElementById('mail').value=e.target.parentElement.firstElementChild.textContent.split(' - ')[1];
+            document.getElementById('phone').value=e.target.parentElement.firstElementChild.textContent.split(' - ')[2];
+            //after populating the fields, book button will do put request, but it also does post request
+            //so, we will initialize a variable, which will define what submit button will do
+            isEdit=1; //if true, book button will do a put request with given data, else post
+            //also initialing a variable to pass id of edit itme
+            eid=e.target.parentElement.id;       
     }
 }
 
